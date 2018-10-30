@@ -1,0 +1,21 @@
+{
+    "name": "AtServer/server",
+    "description": "server",
+    "license": "MIT",
+    "type": "library",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "秋枫",
+            "email": "1018594717@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AtServer\\": "src/"
+        }
+    }
+}
