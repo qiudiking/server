@@ -16,7 +16,7 @@ class Start
 	public static function run()
 	{
         $application = new Application();
-        self::addDirCommand(AT,'\\AtServer',$application);
+        self::addDirCommand(CONSOLE_PATH,'\\AtServer',$application);
         $application->run();
 	}
 
@@ -27,7 +27,7 @@ class Start
 	 */
 	private static function addDirCommand($root, $namespace, Application $application)
 	{
-		$path = $root . "/vendor/at_server/console/src";
+		$path = $root . "/src";
 		if (!file_exists($path)) {
 			return;
 		}
