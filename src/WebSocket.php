@@ -16,9 +16,34 @@ class WebSocket extends HttpServer
 {
 
 	/**
+	 * @param \swoole_websocket_server $server
+	 * @param                          $request
+	 */
+	public function onOpen( \swoole_websocket_server $server, \Swoole\Http\Request $request )
+	{
+		\AtServer\Log::log( $request );
+	}
+
+	/**
+	 * @param \swoole_websocket_server $server
+	 * @param                          $frame
+	 */
+	public function onMessage(\swoole_websocket_server $server, \Swoole\WebSocket\Frame $frame)
+	{
+		\AtServer\Log::log( $frame );
+		//$server->disconnect( $frame->fd, 1000,'不想给你连了' );
+	}
+
+
+	public function onClose( $server, $fd, $reactorId)
+	{
+		\AtServer\Log::log('连接已断开' );
+		\AtServer\Log::log( $fd );
+		\AtServer\Log::log( $reactorId );
+	}
+
+	/**
 	 * @param \Symfony\Component\Console\Style\SymfonyStyle $oi
-	 *
-	 * @throws \Exception
 	 */
 	public  function start(SymfonyStyle $oi)
 	{
@@ -48,6 +73,14 @@ class WebSocket extends HttpServer
 		$this->server->on( 'close', array( $this, 'onClose' ) );
 		$this->server->on( 'request', array( $this, 'onRequest' ) );
 		$this->server->on( 'pipeMessage', array( $this, 'onPipeMessage' ) );
+		$this->server->on('packet',array($this,'onPacket'));
+		$this->server->on('bufferFull',array($this,'onBufferFull'));
+		$this->server->on('bufferEmpty',array($this,'onBufferEmpty'));
+		$this->server->on('workerExit',array($this,'onWorkerExit'));
+		$this->server->on('managerStart',array($this,'onManagerStart'));
+		$this->server->on('managerStop',array($this,'onManagerStop'));
+		$this->server->on('open',array($this, 'onOpen'));
+		$this->server->on('message',array($this, 'onMessage'));
 		$this->server->start();
 	}
 

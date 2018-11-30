@@ -121,8 +121,7 @@ class SwooleServer {
 
 	public function onConnect( $server,  $fd,  $reactorId)
 	{
-		echo "链接成功\n";
-		//Log::log('链接成功');
+		Log::log('链接成功');
 	}
 
 	public function onReceive(\swoole_server $server,  $fd,  $reactor_id,  $data){
@@ -160,57 +159,61 @@ class SwooleServer {
 
 	public function onClose( $server,  $fd,  $reactorId)
 	{
-
+		Log::log( '客户端连接关闭' );
 	}
 
 	public function onPacket( $server,  $data, array $client_info)
 	{
-
+		Log::log('接收到UDP数据');
 	}
 
 	public function onBufferFull( $server,  $fd)
 	{
-
+		Log::log( '缓存区达到最高水位' );
 	}
 
 	public function onBufferEmpty($server,  $fd)
 	{
-
+		Log::log( '缓存区低于最低水位线' );
 	}
 
 	public function onStart($server)
 	{
+		Log::log('启动在主进程的主线程');
 		$process_name = $this->set_process_name('Main');
 		cli_set_process_title($process_name);
 	}
 	public function onShutdown($server){
-
+		Log::log('关闭服务==================>>>');
 	}
 
 	public function onWorkerStart($server,$worker_id)
 	{
-		Log::log($this->serverName.'服务启动成功....');
+
 		if(!$server->taskworker){
+			$res = 'Worker';
 			$process_name = $this->set_process_name('Worker');
 		}else{
+			$res = 'Task进程';
 			$process_name = $this->set_process_name('Task');
 		}
 		cli_set_process_title($process_name);
+		Log::log($this->serverName.$res.'服务启动成功....');
 	}
 
 	public function onWorkerStop($server,  $worker_id)
 	{
-		print_r('关闭');
+		Log::log('worker进程终止时发生');
 	}
 
 	public function onWorkerExit( $server,  $worker_id)
 	{
-
+		Log::log( 'Worker进程未退出' );
 	}
 
 	public function onWorkerError( $server,  $worker_id,  $worker_pid,  $exit_code,  $signal)
 	{
-
+		Log::log('当Worker/Task进程发生异常后会在Manager进程内回调此函数');
 	}
 
 	public function onTask( $server,  $task_id,  $src_worker_id,  $data)
@@ -220,7 +223,7 @@ class SwooleServer {
 
 	public function onFinish( $server,  $task_id,  $data)
 	{
-
+		Log::log( 'worker进程投递的任务在task_worker中完成' );
 	}
 
 	public function onManagerStart($server){
@@ -229,12 +232,12 @@ class SwooleServer {
 	}
 
 	public function onManagerStop($server){
-
+		Log::log('当管理进程结束时调用它');
 	}
 
 	public function onPipeMessage( $server,  $src_worker_id,  $message)
 	{
-
+		Log::log('当工作进程收到由 sendMessage 发送的管道消息时会触发onPipeMessage事件');
 	}
 
 	/**

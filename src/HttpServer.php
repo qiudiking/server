@@ -79,7 +79,7 @@ class HttpServer extends SwooleServer {
 	}
 
 	/**
-	 * HTTP请求
+	 * HTTP请求 API走Task模式
 	 * @param \swoole_http_request  $request
 	 * @param \swoole_http_response $response
 	 *
@@ -125,14 +125,9 @@ class HttpServer extends SwooleServer {
 			$response->header( 'Access-Control-Allow-Origin', '*' );
 			$response->header( 'Access-Control-Allow-Credentials', 'true' );
 			$response->header( 'Content-Type', 'text/html; charset=utf-8' );
-			\Yaf\Registry::del( 'SWOOLE_HTTP_REQUEST' );
-			\Yaf\Registry::del( 'SWOOLE_HTTP_RESPONSE' );
-			//注册全局信息
-			\Yaf\Registry::set( 'SWOOLE_HTTP_REQUEST', $request );
-			\Yaf\Registry::set( 'SWOOLE_HTTP_RESPONSE', $response );
 			$result_i = Result::Instance();
 			try {
-				DFS && $GLOBALS['HTTP_RAW_POST_DATA'] = $request->rawContent();
+				$this->server->taskworker || $GLOBALS['HTTP_RAW_POST_DATA'] = $request->rawContent();
 				$requestObj                    = new \Yaf\Request\Http( $_SERVER['REQUEST_URI'] );
 				$this->app->bootstrap();
 				$this->app->getDispatcher()->dispatch( $requestObj );
@@ -216,7 +211,6 @@ class HttpServer extends SwooleServer {
 	 */
 	public  function start(SymfonyStyle $oi)
 	{
-
 		$config = $this->config['ports'][$this->serverName];
 		$set = $this->config['server'][$this->serverName];
 		self::$instance = $this;
@@ -243,6 +237,13 @@ class HttpServer extends SwooleServer {
 		$this->server->on( 'close', array( $this, 'onClose' ) );
 		$this->server->on( 'request', array( $this, 'onRequest' ) );
 		$this->server->on( 'pipeMessage', array( $this, 'onPipeMessage' ) );
+		$this->server->on('packet',array($this,'onPacket'));
+		$this->server->on('bufferFull',array($this,'onBufferFull'));
+		$this->server->on('bufferEmpty',array($this,'onBufferEmpty'));
+		$this->server->on('workerExit',array($this,'onWorkerExit'));
+		$this->server->on('managerStart',array($this,'onManagerStart'));
+		$this->server->on('managerStop',array($this,'onManagerStop'));
+
 		$this->server->start();
 	}
 
