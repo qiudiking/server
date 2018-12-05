@@ -43,6 +43,7 @@ class SwooleServer {
 	 */
 	public function __construct()
 	{
+		date_default_timezone_set( 'Asia/Shanghai' );
 		$this->setConfig();
 		$this->user = $this->config->get('server.set.user', '');
 		set_error_handler([$this, 'displayErrorHandler'], E_ALL | E_STRICT);

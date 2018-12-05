@@ -356,6 +356,7 @@ function isAjaxRequest()
 function setCookieInfo($name, $value = null, $expires = 0, $path = '/', $domain = '', $secure = false, $httponly = false){
 	if ( php_sapi_name() == 'cli' ) {
 		$response = \AtServer\CoroutineContent::get('response');
+
 		if($response instanceof swoole_http_response){
 			$response->cookie( $name, $value, $expires, $path, $domain, $secure, $httponly );
 		}
