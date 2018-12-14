@@ -249,19 +249,6 @@ class WebSocket extends HttpServer
 
 			$class = '\Library\Ws'.$class;
 			if(class_exists($class)){
-				$get =$request->get?json_encode($request->get): '';
-				$cookie = $request->cookie?json_encode($request->cookie) :'';
-				$clientDdata = [
-					'header'=>json_encode($request->header),
-					'server'=>json_encode($request->server),
-					'get' =>$get,
-					'cookie'=>$cookie,
-					'request_uri' =>$class,
-				];
-				$res = ConnceInfo::set($request->fd,$clientDdata);
-				if(!$res){
-					throw new \Exception('连接已超过限制',1000);
-				}
 				$instance = new $class();
 				if(method_exists($instance,'handshake')){
 					call_user_func_array(array($instance,'handshake'),array($request,$response));
@@ -270,6 +257,19 @@ class WebSocket extends HttpServer
 				}
 			}else{
 				throw new \Exception('没有对应的处理逻辑',1000);
+			}
+			$get =$request->get?json_encode($request->get): '';
+			$cookie = $request->cookie?json_encode($request->cookie) :'';
+			$clientDdata = [
+				'header'=>json_encode($request->header),
+				'server'=>json_encode($request->server),
+				'get' =>$get,
+				'cookie'=>$cookie,
+				'request_uri' =>$class,
+			];
+			$res = ConnceInfo::set($request->fd,$clientDdata);
+			if(!$res){
+				throw new \Exception('连接已超过限制',1000);
 			}
 		}catch(\Exception $e){
 			\AtServer\Log::error( $e->getMessage() );
