@@ -156,6 +156,12 @@ class HttpServer extends SwooleServer {
 			ob_end_clean();
 			if(!CoroutineContent::get('IS_RESPONSE')){
 				$response->end($result);
+				if($this->server instanceof \swoole_websocket_server){
+					$WsMessageObj = sendMessage::sendMessage(getRequestId(),$this->server);
+					if($WsMessageObj instanceof WsMessageBase){
+						$this->sendMessage($this->server, $WsMessageObj->result);
+					}
+				}
 			}
 			CoroutineContent::delete();
 		}
