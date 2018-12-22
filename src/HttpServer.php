@@ -140,7 +140,9 @@ class HttpServer extends SwooleServer {
 				$result_i->set('url',$redirectException->getRedirect_url());
 				$result_i->setCodeMsg($redirectException->getMessage(),$redirectException->getCode());
 				echo $result_i;
-				CoroutineContent::put('IS_RESPONSE',1);
+				if(!isAjaxRequest()){
+					CoroutineContent::put('IS_RESPONSE',1);
+				}
 			} catch ( \Exception $e ) {
 				Log::error('code=' . $e->getCode() . ' : ' . $e->getMessage() . $e->getTraceAsString() );
 
