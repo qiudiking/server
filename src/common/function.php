@@ -10,7 +10,7 @@ function checkExtension()
 	if (!extension_loaded('yaf')) {
 		return "[扩展依赖]缺少yaf扩展";
 	}
-		if (version_compare(Yaf\VERSION, '3.0.6', '<')) {
+		if (version_compare(Yaf\VERSION, '3.0.4', '<')) {
 		return "[版本错误]yaf版本必须大于3.0.6\n";
 	}
 	if (!extension_loaded('yac')) {
@@ -26,12 +26,12 @@ function checkExtension()
 	if (version_compare(seaslog_get_version(), '1.7.6', '<')) {
 		return "[版本错误]SeasLog版本必须大于1.7.6\n";
 	}
-	if (extension_loaded('xhprof')) {
+	/*if (extension_loaded('xhprof')) {
 		return "[扩展错误]不允许加载xhprof扩展，请去除";
 	}
 	if (extension_loaded('xdebug')) {
 		return "[扩展错误]不允许加载xdebug扩展，请去除";
-	}
+	}*/
 	if (version_compare(PHP_VERSION, '7.0.0', '<')) {
 		return "[版本错误]PHP版本必须大于7.0.0\n";
 	}
