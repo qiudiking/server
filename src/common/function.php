@@ -371,5 +371,5 @@ function setCookieInfo($name, $value = null, $expires = 0, $path = '/', $domain 
  */
 function getCookie( $name )
 {
-	return $_COOKIE[$name];
+	return getArrVal($name,$_COOKIE);
 }
